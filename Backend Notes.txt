@@ -115,3 +115,5 @@ example of mini-schema ->
 											type: addressSchema, required: true} // embedding the address schema
 									});
 									const User = mongoose.model('User', userSchema);
+
+
