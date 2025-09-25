@@ -1,0 +1,12 @@
+Backend Notes - 
+
+## npm init - creates a package.json file -- This file is essential for managing project dependencies, scripts, and metadata. 
+
+## npm init -y creates a package.json file with default values.
+
+## to run the server use 'node file_name.js'.
+
+## scripts - in package.json file, we can define custom scripts to automate tasks. For example, we can define a start script to run the server using "start": "node file_name.js". We can then run this script using 'npm start' / 'npm run start'.
+
+## express - A minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications. 
+-- To install express use 'npm install express' or 'npm i express'.
