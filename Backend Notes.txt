@@ -6,7 +6,112 @@ Backend Notes -
 
 ## to run the server use 'node file_name.js'.
 
-## scripts - in package.json file, we can define custom scripts to automate tasks. For example, we can define a start script to run the server using "start": "node file_name.js". We can then run this script using 'npm start' / 'npm run start'.
+## "scripts" -> in package.json file, we can define custom scripts to automate tasks. For example, we can define a start script to run the server using "start": "node file_name.js". We can then run this script using 'npm start' / 'npm run start'.
 
-## express - A minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications. 
+
+## "type": "module" -> in package.json file, this allows us to use ES6 import/export syntax in our Node.js files instead of the default CommonJS require/module.exports syntax.
+
+-- const express = require('express'); // CommonJS syntax - used without "type": "module"
+	for exporting modules -> module.exports = myFunction;
+
+-- import express from 'express'; // ES6 syntax - used with "type": "module"
+	for exporting modules - export default myFunction;
+
+
+## express -> A minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
 -- To install express use 'npm install express' or 'npm i express'.
+
+
+## jsonformatter https://jsonformatter.org/ -> A tool to format and validate JSON data.
+
+
+-------------------------------Frontend Part---------------------------------------------
+## CORS (Cross-Origin Resource Sharing) -> a security mechanism that allows web servers to permit requests for resources from a different origin (domain, protocol, or port) than the one that served the web page.
+ 
+## Axios -> a lightweight, promise-based JavaScript library for making HTTP requests from both browsers and Node.js, simplifying interaction with APIs. It offers a more user-friendly API than native browser methods, providing features like automatic JSON transformation, interceptors for request and response manipulation, built-in error handling, and the ability to cancel requests
+
+-- Features -> 
+- Interceptors: Allows you to intercept requests or responses before they are handled, useful 
+	for modifying them or performing tasks like logging. 
+- Automatic JSON Data Transformation: Axios automatically converts JSON data to JavaScript 
+	objects for easier handling. 
+- Error Handling: Provides structured ways to handle errors using the catch() method, making 
+	error management more robust. 
+
+example -> 
+				axios.get('/user?ID=12345')
+				.then(function (response) {
+					console.log(response);		// handle success
+				})
+				.catch(function (error) {
+					console.log(error);			// handle error
+				})
+				.finally(function () {
+														// always executed
+				});
+
+----------------- Data Modeling and Mongoose -----------------
+## Data Modeling -> The process of creating a data model for the data to be stored in a database. It involves defining the structure, relationships, and constraints of the data.
+
+-- some tools for data modeling - 
+	- moon modeler 
+	- eraser.io
+
+-- first we should think about the entities or the data we need in our application and their relationships.
+
+-- best practices to naming the models file - 
+	- relevant_name_of_model.models.js --> for example user.models.js, product.models.js
+
+
+------------- Mongoose -----------------
+-- mongoose -> an Object Data Modeling (ODM) library for MongoDB and Node.js. It provides a schema-based solution to model application data, making it easier to work with MongoDB by providing structure and validation. 
+
+-- basic code structure to create a model using mongoose -
+
+->			import mongoose from 'mongoose';
+
+			const name_Schema = new mongoose.Schema({     
+					field1: { type: String, required: true },
+					field2: { type: Number, min: [4, 'Field2 must be at least 4'] },
+					                              // custom message if validation fails
+					field3: { type: mongoose.Schema.Types.ObjectId, 
+								 ref: 'OtherModelName' }
+					         // reference to another model
+					field4: { type: String, enum: ['value1', 'value2', 'value3'] }
+					// 'enum' ensures that field4 can only have one of the specified values from the array
+			},
+			{ timestamps: true }  // automatically adds createdAt and updatedAt fields to the schema.
+			)
+
+			export const Name = mongoose.model('Name', name_Schema);
+			
+		Creates a Mongoose model named 'Name' using the schema defined in name_Schema.
+		- A model in Mongoose is a wrapper for the schema and provides an interface to interact with the  
+			MongoDB collection (e.g., querying, inserting, updating documents).
+		- The first argument 'Name' is the name of the model and also determines the collection name in
+		 	MongoDB (it will be pluralized, so 'Name' becomes 'names').
+		- The second argument name_Schema is the schema object that defines the structure and validation
+			rules for documents in the collection.
+
+		-- export const Name = ... --> 
+			Exports the model as a constant named Name, so it can be imported and used in other files.
+
+
+-- inside a model file we can also create multiple mini-models/mini-schemas to use them as fields in 
+	the main schema.
+	
+example of mini-schema -> 
+									const addressSchema = new mongoose.Schema({
+										street: String,
+										city: String,
+										state: String,
+										zip: String
+									});
+
+									const userSchema = new mongoose.Schema({
+										name: String,
+										email: String,
+										address: {
+											type: addressSchema, required: true} // embedding the address schema
+									});
+									const User = mongoose.model('User', userSchema);
