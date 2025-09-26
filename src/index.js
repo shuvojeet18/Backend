@@ -1,18 +1,16 @@
 // This is the entry point for the application
-const express = require("express");
-require("dotenv").config();
+import express from "express";
+
+import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
+
+import connectDB from "./db/connectDB.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.get("/", (req, res) => {
-   res.send("Hello World!");
-});
-
-app.get("/health", (req, res) => {
-   res.status(200).send("OK");
-});
+connectDB();
 
 app.listen(PORT, () => {
-   console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
